@@ -39,7 +39,8 @@ def streamlit_flow(key:str,
                     enable_pane_menu:bool=False,
                     enable_node_menu:bool=False,
                     enable_edge_menu:bool=False,
-                    hide_watermark:bool=False):
+                    hide_watermark:bool=False,
+                    default_edge_options:dict={}):
     
     """
     The main function to render the flowchart component in Streamlit.
@@ -64,6 +65,7 @@ def streamlit_flow(key:str,
     - **enable_node_menu** : bool : Whether to enable the node menu.
     - **enable_edge_menu** : bool : Whether to enable the edge menu.
     - **hide_watermark** : bool : Whether to hide the watermark.
+    - **default_edge_options** : dict : Default options for new edges.
     """
 
     nodes = [node.asdict() for node in state.nodes]
@@ -88,6 +90,7 @@ def streamlit_flow(key:str,
                                         enablePaneMenu=enable_pane_menu,
                                         enableEdgeMenu=enable_edge_menu,
                                         hideWatermark=hide_watermark,
+                                        defaultEdgeOptions=default_edge_options,
                                         key=key,
                                         timestamp=state.timestamp,
                                         component='streamlit_flow')

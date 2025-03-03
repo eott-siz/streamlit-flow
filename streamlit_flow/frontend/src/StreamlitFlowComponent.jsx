@@ -234,6 +234,7 @@ const StreamlitFlowComponent = (props) => {
                 zoomOnScroll={props.args.allowZoom}
                 zoomOnPinch={props.args.allowZoom}
                 minZoom={props.args.minZoom}
+                defaultEdgeOptions={props.args.defaultEdgeOptions}
                 proOptions={{hideAttribution: props.args.hideWatermark}}>
                     <Background/>
                     {paneContextMenu && <PaneConextMenu 
