@@ -1,5 +1,7 @@
 ![Streamlit Flow Logo](https://raw.githubusercontent.com/dkapur17/streamlit-flow/master/assets/streamlit-flow-banner-bg.svg)
 
+**Note: This is a fork of Streamlit Flow with custom changes to support a specific app. Please visit the [upstream repository](https://github.com/dkapur17/streamlit-flow) to keep up to date with the library or to participate in development.**
+
 # Streamlit Flow
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://stflow.streamlit.app)
 
@@ -56,6 +58,10 @@ On the second terminal, run from the root of the repository
 ```bash
 streamlit run example.py
 ```
+
+## Changes compared to upstream
+
+* Remove scripts for packaging and uploading to PyPI
 
 ## Change log
 
