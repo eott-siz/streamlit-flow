@@ -5,6 +5,8 @@ import setuptools
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
+# this repository is a fork. DO NOT upload to PyPI or other package indexes,
+# as this fork is intended to be run locally for specific apps only
 setuptools.setup(
     name="streamlit-flow-component",
     version="1.6.1",
