@@ -62,6 +62,7 @@ streamlit run example.py
 ## Changes compared to upstream
 
 * Remove scripts for packaging and uploading to PyPI
+* Add argument to StreamlitFlow for setting default edge options
 
 ## Change log
 
