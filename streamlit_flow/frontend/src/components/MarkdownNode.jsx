@@ -20,56 +20,43 @@ const remarkPlugins = [remarkGfm, remarkMath];
 const rehypePlugins = [rehypeHighlight, rehypeRaw, rehypeKatex];
 
 const MemoizedMarkdown = memo(({ content }) => (
-    <Markdown 
-        rehypePlugins={rehypePlugins} 
+    <Markdown
+        rehypePlugins={rehypePlugins}
         remarkPlugins={remarkPlugins}
     >
         {content}
     </Markdown>
 ));
 
-const MarkdownInputNode = ({ data, sourcePosition }) => {
-    
-    const position = handlePosMap[sourcePosition] || Position.Right;
-    
+function MarkdownNode(data, sourcePosition = false, targetPosition = false) {
+    const sourcePos = sourcePosition && (handlePosMap[sourcePosition] || Position.Right);
+    const targetPos = targetPosition && (handlePosMap[targetPosition] || Position.Left);
+
     return (
         <>
-            <Handle type="source" position={position} isConnectable />
+            {sourcePos && (
+                <Handle type="source" position={sourcePos} isConnectable />
+            )}
             <div className="markdown-node">
                 <MemoizedMarkdown content={data.content} />
             </div>
+            {targetPos && (
+                <Handle type="target" position={targetPos} isConnectable />
+            )}
         </>
     );
+}
+
+const MarkdownInputNode = ({ data, sourcePosition }) => {
+    return MarkdownNode(data, sourcePosition, false)
 };
 
 const MarkdownOutputNode = ({ data, targetPosition }) => {
-
-    const position = handlePosMap[targetPosition] || Position.Left;
-    
-    return (
-        <>
-            <Handle type="target" position={position} isConnectable />
-            <div className="markdown-node">
-                <MemoizedMarkdown content={data.content} />
-            </div>
-        </>
-    );
+    return MarkdownNode(data, false, targetPosition)
 };
 
 const MarkdownDefaultNode = ({ data, sourcePosition, targetPosition }) => {
-
-    const sourcePos = handlePosMap[sourcePosition] || Position.Right;
-    const targetPos = handlePosMap[targetPosition] || Position.Left;
-    
-    return (
-        <>
-            <Handle type="source" position={sourcePos} isConnectable />
-            <div className="markdown-node">
-                <MemoizedMarkdown content={data.content} />
-            </div>
-            <Handle type="target" position={targetPos} isConnectable />
-        </>
-    );
+    return MarkdownNode(data, sourcePosition, targetPosition)
 };
 
 export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode }
