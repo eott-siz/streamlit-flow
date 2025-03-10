@@ -69,20 +69,24 @@ function MarkdownNode(
     );
 }
 
-const MD1S0T = ({ data, sourcePosition }) => {
+const MarkdownInputNode = ({ data, sourcePosition }) => {
     return MarkdownNode(data, sourcePosition, 1, false, 0)
 };
 
-const MD0S1T = ({ data, targetPosition }) => {
+const MarkdownOutputNode = ({ data, targetPosition }) => {
     return MarkdownNode(data, false, 0, targetPosition, 1)
 };
 
-const MD1S1T = ({ data, sourcePosition, targetPosition }) => {
+const MarkdownDefaultNode = ({ data, sourcePosition, targetPosition }) => {
     return MarkdownNode(data, sourcePosition, 1, targetPosition, 1)
 };
 
-const MarkdownInputNode = MD1S0T;
-const MarkdownOutputNode = MD0S1T;
-const MarkdownDefaultNode = MD1S1T;
+const MarkdownMultihandleNode = ({
+    data,
+    sourcePosition, sourceHandles,
+    targetPosition, targetHandles
+}) => {
+    return MarkdownNode(data, sourcePosition, sourceHandles, targetPosition, targetHandles)
+};
 
-export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode }
+export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode, MarkdownMultihandleNode }
