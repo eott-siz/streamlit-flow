@@ -28,35 +28,61 @@ const MemoizedMarkdown = memo(({ content }) => (
     </Markdown>
 ));
 
-function MarkdownNode(data, sourcePosition = false, targetPosition = false) {
+function MarkdownNode(
+    data,
+    sourcePosition = false, sourceHandles = 0,
+    targetPosition = false, targetHandles = 0
+) {
     const sourcePos = sourcePosition && (handlePosMap[sourcePosition] || Position.Right);
     const targetPos = targetPosition && (handlePosMap[targetPosition] || Position.Left);
 
     return (
         <>
-            {sourcePos && (
+            {sourcePos && sourceHandles > 0 && (
+                <Handle type="source" position={sourcePos} isConnectable />
+            )}
+            {sourcePos && sourceHandles > 1 && (
+                <Handle type="source" position={sourcePos} isConnectable />
+            )}
+            {sourcePos && sourceHandles > 2 && (
+                <Handle type="source" position={sourcePos} isConnectable />
+            )}
+            {sourcePos && sourceHandles > 3 && (
                 <Handle type="source" position={sourcePos} isConnectable />
             )}
             <div className="markdown-node">
                 <MemoizedMarkdown content={data.content} />
             </div>
-            {targetPos && (
+            {targetPos && targetHandles > 0 && (
+                <Handle type="target" position={targetPos} isConnectable />
+            )}
+            {targetPos && targetHandles > 1 && (
+                <Handle type="target" position={targetPos} isConnectable />
+            )}
+            {targetPos && targetHandles > 2 && (
+                <Handle type="target" position={targetPos} isConnectable />
+            )}
+            {targetPos && targetHandles > 3 && (
                 <Handle type="target" position={targetPos} isConnectable />
             )}
         </>
     );
 }
 
-const MarkdownInputNode = ({ data, sourcePosition }) => {
-    return MarkdownNode(data, sourcePosition, false)
+const MD1S0T = ({ data, sourcePosition }) => {
+    return MarkdownNode(data, sourcePosition, 1, false, 0)
 };
 
-const MarkdownOutputNode = ({ data, targetPosition }) => {
-    return MarkdownNode(data, false, targetPosition)
+const MD0S1T = ({ data, targetPosition }) => {
+    return MarkdownNode(data, false, 0, targetPosition, 1)
 };
 
-const MarkdownDefaultNode = ({ data, sourcePosition, targetPosition }) => {
-    return MarkdownNode(data, sourcePosition, targetPosition)
+const MD1S1T = ({ data, sourcePosition, targetPosition }) => {
+    return MarkdownNode(data, sourcePosition, 1, targetPosition, 1)
 };
+
+const MarkdownInputNode = MD1S0T;
+const MarkdownOutputNode = MD0S1T;
+const MarkdownDefaultNode = MD1S1T;
 
 export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode }
