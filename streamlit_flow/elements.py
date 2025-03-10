@@ -12,9 +12,11 @@ class StreamlitFlowNode:
     - **id** : str : Unique identifier for the node
     - **pos** : Tuple[float, float] : Position of the node in the canvas
     - **data** : Dict[str, any] : Arbitrary data to save in the node. Use {'content': 'Node content'} to set the content of the node
-    - **node_type** : str : Type of the node. One of ['default', 'input', 'output']
+    - **node_type** : str : Type of the node. One of ['default', 'input', 'output', 'multihandle']
     - **source_position** : str : Position of the source anchor. One of ['top', 'bottom', 'left', 'right']
+    - **source_handles** : int : Number of source anchors. Only required for node type 'multihandle'
     - **target_position** : str : Position of the target anchor. One of ['top', 'bottom', 'left', 'right']
+    - **source_handles** : int : Number of target anchors. Only required for node type 'multihandle'
     - **hidden** : bool : Whether the node is hidden
     - **selected** : bool : Whether the node is selected
     - **dragging** : bool : Whether the node is being dragged (?)
@@ -32,9 +34,11 @@ class StreamlitFlowNode:
                     id:str,
                     pos: Tuple[float, float],
                     data:Dict[str, any],
-                    node_type:Literal['default', 'input', 'output'] = 'default',
+                    node_type:Literal['default', 'input', 'output', 'multihandle'] = 'default',
                     source_position:Literal['bottom', 'top', 'left', 'right'] = 'bottom',
+                    source_handles:int = 0,
                     target_position:Literal['bottom', 'top', 'left', 'right'] = 'top',
+                    target_handles:int = 0,
                     hidden:bool=False,
                     selected:bool=False,
                     dragging:bool=False,
@@ -58,7 +62,9 @@ class StreamlitFlowNode:
         self.data = data
         self.type = node_type
         self.source_position = source_position
+        self.source_handles = source_handles
         self.target_position = target_position
+        self.target_handles = target_handles
         self.hidden = hidden
         self.selected = selected
         self.dragging = dragging
@@ -89,7 +95,9 @@ class StreamlitFlowNode:
                     data=node_dict.get('data', {}),
                     node_type=node_dict.get('type', 'default'),
                     source_position=node_dict.get('sourcePosition', 'bottom'),
+                    source_handles=node_dict.get('sourceHandles', 0),
                     target_position=node_dict.get('targetPosition', 'top'),
+                    target_handles=node_dict.get('targetHandles', 0),
                     hidden=node_dict.get('hidden', False),
                     selected=node_dict.get('selected', False),
                     dragging=node_dict.get('dragging', False),
@@ -104,9 +112,11 @@ class StreamlitFlowNode:
 
 
     def __validate__(self):
-        assert self.type in ['default', 'input', 'output'], f"Node type must be one of ['default', 'input', 'output']. Got {self.type}"
+        assert self.type in ['default', 'input', 'output', 'multihandles'], f"Node type must be one of ['default', 'input', 'output', 'multihandles']. Got {self.type}"
         assert self.source_position in ['top', 'bottom', 'left', 'right'], f"Source position must be one of ['top', 'bottom', 'left', 'right']. Got {self.source_position}"
         assert self.target_position in ['top', 'bottom', 'left', 'right'], f"Target position must be one of ['top', 'bottom', 'left', 'right']. Got {self.target_position}"
+        assert self.type != 'multihandles' or self.source_handles <= 4, f"More than four source anchors are not supported."
+        assert self.type != 'multihandles' or self.target_handles <= 4, f"More than four target anchors are not supported."
 
 
     def asdict(self) -> Dict[str, any]:
@@ -116,7 +126,9 @@ class StreamlitFlowNode:
             "data": self.data,
             "type": self.type,
             "sourcePosition": self.source_position,
+            "sourceHandles": self.source_handles,
             "targetPosition": self.target_position,
+            "targetHandles": self.target_handles,
             "hidden": self.hidden,
             "selected": self.selected,
             "dragging": self.dragging,
