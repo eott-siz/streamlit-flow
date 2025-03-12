@@ -21,9 +21,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import './style.css';
 
-import {
-    MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode, MarkdownMultihandleNode
-} from "./components/MarkdownNode";
+import { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode } from "./components/MarkdownNode";
 import PaneConextMenu from "./components/PaneContextMenu";
 import NodeContextMenu from "./components/NodeContextMenu";
 import EdgeContextMenu from "./components/EdgeContextMenu";
@@ -33,10 +31,11 @@ import createElkGraphLayout from "./layouts/ElkLayout";
 const StreamlitFlowComponent = (props) => {
 
     const nodeTypes = useMemo(() => ({
-        input: MarkdownInputNode, output: MarkdownOutputNode,
-        default: MarkdownDefaultNode, multihandle: MarkdownMultihandleNode
+        input: MarkdownInputNode,
+        output: MarkdownOutputNode,
+        default: MarkdownDefaultNode
     }), []);
-    
+
     const [viewFitAfterLayout, setViewFitAfterLayout] = useState(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(props.args.nodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props.args.edges);

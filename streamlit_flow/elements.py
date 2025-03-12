@@ -12,11 +12,11 @@ class StreamlitFlowNode:
     - **id** : str : Unique identifier for the node
     - **pos** : Tuple[float, float] : Position of the node in the canvas
     - **data** : Dict[str, any] : Arbitrary data to save in the node. Use {'content': 'Node content'} to set the content of the node
-    - **node_type** : str : Type of the node. One of ['default', 'input', 'output', 'multihandle']
-    - **source_position** : str : Position of the source anchor. One of ['top', 'bottom', 'left', 'right']
-    - **source_handles** : int : Number of source anchors. Only required for node type 'multihandle'
-    - **target_position** : str : Position of the target anchor. One of ['top', 'bottom', 'left', 'right']
-    - **source_handles** : int : Number of target anchors. Only required for node type 'multihandle'
+    - **node_type** : str : Type of the node. One of ['default', 'input', 'output']
+    - **source_position** : str : Position of the source anchors. One of ['top', 'bottom', 'left', 'right']
+    - **source_handles** : int : Number of source anchors. Only required for node types 'input' and 'default'
+    - **target_position** : str : Position of the target anchors. One of ['top', 'bottom', 'left', 'right']
+    - **source_handles** : int : Number of target anchors. Only required for node types 'output' and 'default'
     - **hidden** : bool : Whether the node is hidden
     - **selected** : bool : Whether the node is selected
     - **dragging** : bool : Whether the node is being dragged (?)
@@ -34,7 +34,7 @@ class StreamlitFlowNode:
                     id:str,
                     pos: Tuple[float, float],
                     data:Dict[str, any],
-                    node_type:Literal['default', 'input', 'output', 'multihandle'] = 'default',
+                    node_type:Literal['default', 'input', 'output'] = 'default',
                     source_position:Literal['bottom', 'top', 'left', 'right'] = 'bottom',
                     source_handles:int = 0,
                     target_position:Literal['bottom', 'top', 'left', 'right'] = 'top',
@@ -112,11 +112,11 @@ class StreamlitFlowNode:
 
 
     def __validate__(self):
-        assert self.type in ['default', 'input', 'output', 'multihandles'], f"Node type must be one of ['default', 'input', 'output', 'multihandles']. Got {self.type}"
+        assert self.type in ['default', 'input', 'output'], f"Node type must be one of ['default', 'input', 'output']. Got {self.type}"
         assert self.source_position in ['top', 'bottom', 'left', 'right'], f"Source position must be one of ['top', 'bottom', 'left', 'right']. Got {self.source_position}"
         assert self.target_position in ['top', 'bottom', 'left', 'right'], f"Target position must be one of ['top', 'bottom', 'left', 'right']. Got {self.target_position}"
-        assert self.type != 'multihandles' or self.source_handles <= 4, f"More than four source anchors are not supported."
-        assert self.type != 'multihandles' or self.target_handles <= 4, f"More than four target anchors are not supported."
+        assert self.type != 'input' or self.source_handles >= 0, f"Number of source anchors must be 0 or a positive integer."
+        assert self.type != 'output' or self.target_handles >= 0, f"Number of target anchors must be 0 or a positive integer."
 
 
     def asdict(self) -> Dict[str, any]:
@@ -142,6 +142,10 @@ class StreamlitFlowNode:
             "style": self.style,
         }
         node_dict.update(self.kwargs)
+        node_dict["data"].update({
+            "sourceHandles": self.source_handles,
+            "targetHandles": self.target_handles,
+        })
         return node_dict
 
     def __repr__(self):

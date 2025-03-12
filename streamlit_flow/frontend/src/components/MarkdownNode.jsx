@@ -28,65 +28,70 @@ const MemoizedMarkdown = memo(({ content }) => (
     </Markdown>
 ));
 
+function styleArgs(pos, n, i) {
+    if (pos === Position.Left || pos === Position.Right) {
+        return {"top": `${(i+1) * (100.0 / (n+1))}%`}
+    }
+    else {
+        return {"left": `${(i+1) * (100.0 / (n+1))}%`}
+    }
+}
+
 function MarkdownNode(
     data,
-    sourcePosition = false, sourceHandles = 0,
-    targetPosition = false, targetHandles = 0
+    sourcePosition = false,
+    targetPosition = false
 ) {
+    const sourceHandles = data.sourceHandles !== undefined ? data.sourceHandles : 0
+    const targetHandles = data.targetHandles !== undefined ? data.targetHandles : 0
     const sourcePos = sourcePosition && (handlePosMap[sourcePosition] || Position.Right);
     const targetPos = targetPosition && (handlePosMap[targetPosition] || Position.Left);
 
     return (
         <>
-            {sourcePos && sourceHandles > 0 && (
-                <Handle type="source" position={sourcePos} isConnectable />
-            )}
-            {sourcePos && sourceHandles > 1 && (
-                <Handle type="source" position={sourcePos} isConnectable />
-            )}
-            {sourcePos && sourceHandles > 2 && (
-                <Handle type="source" position={sourcePos} isConnectable />
-            )}
-            {sourcePos && sourceHandles > 3 && (
-                <Handle type="source" position={sourcePos} isConnectable />
-            )}
+            <div className="node-handles">
+                {sourcePos &&
+                    [...Array(sourceHandles)].map((_, i) => (
+                        <Handle id={`source-${i}`} className="custom-handle"
+                            type="source" position={sourcePos} isConnectable
+                            style={styleArgs(sourcePos, sourceHandles, i)}
+                        />
+                    ))
+                }
+            </div>
+
             <div className="markdown-node">
                 <MemoizedMarkdown content={data.content} />
             </div>
-            {targetPos && targetHandles > 0 && (
-                <Handle type="target" position={targetPos} isConnectable />
-            )}
-            {targetPos && targetHandles > 1 && (
-                <Handle type="target" position={targetPos} isConnectable />
-            )}
-            {targetPos && targetHandles > 2 && (
-                <Handle type="target" position={targetPos} isConnectable />
-            )}
-            {targetPos && targetHandles > 3 && (
-                <Handle type="target" position={targetPos} isConnectable />
-            )}
+
+            <div className="node-handles">
+                {targetPos &&
+                    [...Array(targetHandles)].map((_, i) => (
+                        <Handle id={`target-${i}`} className="custom-handle"
+                            type="target" position={targetPos} isConnectable
+                            style={styleArgs(targetPos, targetHandles, i)}
+                        />
+                    ))
+                }
+            </div>
         </>
     );
 }
 
 const MarkdownInputNode = ({ data, sourcePosition }) => {
-    return MarkdownNode(data, sourcePosition, 1, false, 0)
+    return MarkdownNode(data, sourcePosition, false)
 };
 
 const MarkdownOutputNode = ({ data, targetPosition }) => {
-    return MarkdownNode(data, false, 0, targetPosition, 1)
+    return MarkdownNode(data, false, targetPosition)
 };
 
-const MarkdownDefaultNode = ({ data, sourcePosition, targetPosition }) => {
-    return MarkdownNode(data, sourcePosition, 1, targetPosition, 1)
-};
-
-const MarkdownMultihandleNode = ({
+const MarkdownDefaultNode = ({
     data,
-    sourcePosition, sourceHandles,
-    targetPosition, targetHandles
+    sourcePosition,
+    targetPosition
 }) => {
-    return MarkdownNode(data, sourcePosition, sourceHandles, targetPosition, targetHandles)
+    return MarkdownNode(data, sourcePosition, targetPosition)
 };
 
-export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode, MarkdownMultihandleNode }
+export { MarkdownInputNode, MarkdownOutputNode, MarkdownDefaultNode }
